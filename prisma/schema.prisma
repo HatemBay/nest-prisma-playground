@@ -11,6 +11,14 @@ datasource db {
 }
 
 model Book {
+  id       Int     @id @default(autoincrement())
+  title    String
+  author   Author? @relation(fields: [authorId], references: [id])
+  authorId Int?
+}
+
+model Author {
   id    Int    @id @default(autoincrement())
-  title String
+  name  String
+  books Book[]
 }
