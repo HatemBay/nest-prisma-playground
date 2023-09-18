@@ -5,7 +5,7 @@ import { Book, Prisma } from '@prisma/client';
 export class BooksService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createBookDto: Prisma.BookCreateInput): Promise<Book> {
+  async create(createBookDto: Prisma.BookUncheckedCreateInput): Promise<Book> {
     try {
       return await this.prisma.book.create({ data: createBookDto });
     } catch (error) {
@@ -25,7 +25,12 @@ export class BooksService {
   }
 
   async findAll() {
-    return await this.prisma.book.findMany();
+    return await this.prisma.book.findMany({
+      include: {
+        // Nb: true means that all properties will be included, otherwise we just specify the shape and conditions in options
+        author: true,
+      },
+    });
   }
 
   async findOne(where: Prisma.BookWhereUniqueInput) {
@@ -45,7 +50,7 @@ export class BooksService {
 
   async update(params: {
     where: Prisma.BookWhereUniqueInput;
-    data: Prisma.BookUpdateInput;
+    data: Prisma.BookUncheckedUpdateInput;
   }) {
     const { data, where } = params;
     try {
